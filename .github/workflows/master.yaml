@@ -1,9 +1,6 @@
 name: Master Deployment Pipeline
 
 on:
-  push:
-    branches:
-      - '**'
   workflow_dispatch:
 jobs:
   approval:
@@ -11,8 +8,8 @@ jobs:
     environment:
       name: devops
     steps:
-      - name: Awaiting manual approval
-        run: echo "Manual approval granted via environment 'devops'"
+    - name: Awaiting manual approval
+      run: echo "Manual approval granted via environment 'devops'"
 
   run-iac:
     needs: approval
