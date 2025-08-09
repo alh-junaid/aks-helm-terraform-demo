@@ -1,17 +1,19 @@
 from flask import Flask
 from flask_restful import Api, Resource
 
-app =   Flask(__name__)
-
-api =   Api(app)
+app = Flask(__name__)
+api = Api(app)
 
 class HelloWorld(Resource):
     def get(self):
-        data={"data":"Hello World"}
-        return data
+        return {"data": "Hello World"}
 
-api.add_resource(HelloWorld,'/hello')
+class HealthCheck(Resource):
+    def get(self):
+        return {"status": "healthy"}, 200
 
+api.add_resource(HelloWorld, '/hello')
+api.add_resource(HealthCheck, '/health')
 
-if __name__=='__main__':
+if __name__ == '__main__':
     app.run(debug=True)
