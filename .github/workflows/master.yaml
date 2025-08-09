@@ -1,0 +1,25 @@
+name: Master Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
+jobs:
+  approval:
+    runs-on: ubuntu-latest
+    environment:
+      name: devops
+    steps:
+      - name: Awaiting manual approval
+        run: echo "Manual approval granted via environment 'devops'"
+
+  run-iac:
+    needs: approval
+    uses: ./.github/workflows/infra.yaml
+    secrets: inherit
+
+  run-helm:
+    needs: run-iac
+    uses: ./.github/workflows/helloworld.yaml
+    secrets: inherit

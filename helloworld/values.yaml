@@ -1,0 +1,22 @@
+replicaCount: 1
+namespace: hello-world
+
+image:
+  repository: alhjunaid/aks_demo
+  pullPolicy: IfNotPresent
+  tag: latest
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 5000
+
+containerPort: 5000
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
