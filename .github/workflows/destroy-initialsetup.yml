@@ -1,0 +1,31 @@
+name: Terraform Backend Destroy
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  destroy-backend:
+    runs-on: ubuntu-latest
+    env:
+      stateSubscription: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      stateResourceGroupName: dev-tfstate-rg
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Destroy Resource Group (and everything inside it)
+      run: |
+        echo "Setting subscription..."
+        az account set --subscription $stateSubscription
+
+        echo "Deleting resource group..."
+        az group delete \
+          --name $stateResourceGroupName \
+          --yes --no-wait
+        echo "Resource group $stateResourceGroupName is being deleted."
