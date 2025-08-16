@@ -1,3 +1,5 @@
+.azure
+.kube
 .*.swp
 ./*.tfstate
 .DS_Store
