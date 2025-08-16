@@ -1,0 +1,24 @@
+name: Master Destroy Pipeline
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  approval:
+    runs-on: ubuntu-latest
+    environment:
+      name: devops
+    steps:
+    - name: Awaiting manual approval
+      run: echo "Manual approval granted via environment 'devops'"
+
+  destroy-helm:
+    needs: approval
+    uses: ./.github/workflows/destroy-helm.yaml
+    secrets: inherit
+
+  destroy-iac:
+    needs: destroy-helm
+    uses: ./.github/workflows/destroy-infra.yml
+    secrets: inherit

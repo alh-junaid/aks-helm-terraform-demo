@@ -4,7 +4,7 @@ namespace: hello-world
 image:
   repository: alhjunaid/aks_demo
   pullPolicy: IfNotPresent
-  tag: latest
+  tag: v1
 
 service:
   type: LoadBalancer

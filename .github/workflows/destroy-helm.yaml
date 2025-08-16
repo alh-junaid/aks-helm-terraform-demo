@@ -1,0 +1,28 @@
+name: Helm Uninstall from AKS
+
+on:
+  workflow_call:
+
+
+jobs:
+  helm-delete:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Azure credentials
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Get AKS credentials
+      run: |
+        az aks get-credentials --resource-group my-resource-group --name my-aks --overwrite-existing
+
+    - name: Uninstall Helm Release
+      run: |
+        helm uninstall application --namespace hello-world || true
+
+    - name: Delete Namespace
+      run: |
+        kubectl delete namespace hello-world --ignore-not-found
