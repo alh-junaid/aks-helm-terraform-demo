@@ -1,0 +1,57 @@
+name: Terraform Backend Bootstrap
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  create-backend:
+    runs-on: ubuntu-latest
+    env:
+      stateSubscription: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      stateResourceGroupName: dev-tfstate-rg
+      stateLocation: uksouth
+      stateStorageAccountName: gactfstatedemo1
+      stateStorageAccountSku: Standard_LRS
+      stateContainerName: tfstate
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Create TF State Storage (like AzureCLI@2)
+      run: |
+        echo "Setting subscription..."
+        az account set --subscription $stateSubscription
+
+        echo "Creating resource group..."
+        az group create \
+          --name $stateResourceGroupName \
+          --location $stateLocation
+
+        echo "Creating storage account..."
+        az storage account create \
+          --resource-group $stateResourceGroupName \
+          --name $stateStorageAccountName \
+          --sku $stateStorageAccountSku \
+          --encryption-services blob \
+          --location $stateLocation \
+          --kind StorageV2 \
+          --min-tls-version TLS1_2 \
+          --allow-blob-public-access false \
+          --https-only true
+
+        echo "Creating container..."
+        az storage container create \
+          --name $stateContainerName \
+          --account-name $stateStorageAccountName
+
+        echo "Enabling versioning..."
+        az storage account blob-service-properties update \
+          --resource-group $stateResourceGroupName \
+          --account-name $stateStorageAccountName \
+          --enable-versioning true
